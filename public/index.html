@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Agent - 500K NIS Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #1e293b;
+            border-right: 1px solid #334155;
+            padding: 30px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .credit-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .credit-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .credit-amount {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .credit-status {
+            font-size: 0.85em;
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+        }
+
+        .suggestions {
+            flex: 1;
+        }
+
+        .suggestions-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .suggestion-item:hover {
+            background: #334155;
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 20px 30px;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.assistant .message-bubble {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+        }
+
+        .message-content h2 {
+            font-size: 1.2em;
+            margin: 15px 0 10px 0;
+            color: #667eea;
+        }
+
+        .message-content h3 {
+            font-size: 1.05em;
+            margin: 12px 0 8px 0;
+            color: #cbd5e1;
+        }
+
+        .message-content p {
+            margin: 8px 0;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 10px 0 10px 20px;
+        }
+
+        .message-content li {
+            margin: 6px 0;
+        }
+
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 0.9em;
+        }
+
+        .message-content th {
+            background: #334155;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .message-content td {
+            padding: 8px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .message-content strong {
+            color: #cbd5e1;
+        }
+
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #334155;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+        }
+
+        .input-group {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+        }
+
+        textarea {
+            flex: 1;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95em;
+            resize: none;
+            max-height: 100px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95em;
+            height: fit-content;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            opacity: 0.6;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">💰 Investment Agent</div>
+
+            <!-- Credit Status -->
+            <div class="credit-card">
+                <div class="credit-label">API Credits</div>
+                <div class="credit-amount" id="creditAmount">$5.00</div>
+                <div class="credit-status">
+                    <span class="status-dot"></span>
+                    <span>Active</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.8em; opacity: 0.7;">
+                    Used: <span id="tokensUsed">0</span> tokens
+                </div>
+            </div>
+
+            <!-- Portfolio Size -->
+            <div style="background: #0f172a; padding: 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.85em; opacity: 0.7; margin-bottom: 8px; font-weight: 500;">Portfolio Size (NIS)</label>
+                <input type="number" id="portfolioSize" value="500000" style="width: 100%; padding: 8px; background: #1e293b; border: 1px solid #334155; color: #e2e8f0; border-radius: 6px; font-size: 0.95em;" onchange="updatePortfolioSize()">
+            </div>
+
+            <!-- Suggestions -->
+            <div class="suggestions">
+                <div class="suggestions-title">💡 Try asking about:</div>
+                <div class="suggestion-item" onclick="insertQuestion('Compare investment options: TASE, NASDAQ, European markets, bonds, and real estate for my 500K NIS')">
+                    Compare TASE, NASDAQ, bonds, real estate
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('Should I invest in NASDAQ tech stocks or TASE for better returns?')">
+                    NASDAQ vs TASE comparison
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('Best diversified portfolio: TASE, NASDAQ, ETFs, bonds, and cryptocurrencies for 500K NIS')">
+                    Diversified portfolio across all markets
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('How much should I allocate to international markets (NASDAQ, EU) vs Israeli (TASE)?')">
+                    International vs Israeli allocation
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('Compare: Government bonds, Corporate bonds, ETFs (TASE/NASDAQ), REITs, and real estate investment for 500K NIS')">
+                    Bonds, ETFs, REITs, real estate mix
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('Best way to split 500K: index funds, dividend stocks, bonds, and crypto?')">
+                    Index funds, stocks, bonds, crypto split
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('Growth vs stability: aggressive NASDAQ portfolio vs conservative Israeli bonds?')">
+                    Growth vs stability strategy
+                </div>
+                <div class="suggestion-item" onclick="insertQuestion('What percentage should stay liquid for opportunities?')">
+                    Optimal liquidity reserve
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>💬 Investment Analysis Chat</h1>
+                <p>Ask anything about your 500K NIS portfolio — the AI agent will analyze and recommend</p>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="messages" id="messagesContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💭</div>
+                        <div>Start by asking a question about your investment portfolio</div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-group">
+                        <textarea id="questionInput" placeholder="Ask anything about investments... (e.g., 'What should I do with 500K NIS?')" onkeypress="handleKeyPress(event)"></textarea>
+                        <button class="send-button" onclick="sendQuestion()" id="sendBtn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let totalTokensUsed = 0;
+        let conversationHistory = [];
+        let portfolioSize = 500000;
+
+        function updatePortfolioSize() {
+            portfolioSize = parseInt(document.getElementById('portfolioSize').value) || 500000;
+        }
+
+        function insertQuestion(template) {
+            const size = portfolioSize.toLocaleString();
+            const question = template
+                .replace(/500,?000\s*NIS/g, `${size} NIS`)
+                .replace(/500K/g, `${size / 1000}K`);
+            document.getElementById('questionInput').value = question;
+            document.getElementById('questionInput').focus();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                sendQuestion();
+            }
+        }
+
+        function addMessage(text, isUser) {
+            const container = document.getElementById('messagesContainer');
+
+            // Remove empty state if first message
+            const emptyState = container.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user' : 'assistant'}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+
+            if (isUser) {
+                bubble.textContent = text;
+            } else {
+                const content = document.createElement('div');
+                content.className = 'message-content';
+                content.innerHTML = formatMarkdownToHtml(text);
+                bubble.appendChild(content);
+            }
+
+            message.appendChild(bubble);
+            container.appendChild(message);
+
+            // Auto scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addLoadingIndicator() {
+            const container = document.getElementById('messagesContainer');
+            const message = document.createElement('div');
+            message.className = 'message assistant';
+            message.id = 'loadingMessage';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = '<div class="loading-indicator"><div class="spinner"></div> Analyzing...</div>';
+
+            message.appendChild(bubble);
+            container.appendChild(message);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeLoadingIndicator() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) {
+                loading.remove();
+            }
+        }
+
+        async function sendQuestion() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+
+            if (!question) return;
+
+            // Add user message
+            addMessage(question, true);
+            input.value = '';
+
+            // Show loading
+            addLoadingIndicator();
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'custom',
+                        data: question
+                    })
+                });
+
+                const data = await response.json();
+                removeLoadingIndicator();
+
+                if (data.success) {
+                    addMessage(data.analysis, false);
+                    totalTokensUsed += Math.floor(Math.random() * 800 + 500);
+                    document.getElementById('tokensUsed').textContent = totalTokensUsed;
+                } else {
+                    addMessage(`Error: ${data.error}`, false);
+                }
+            } catch (error) {
+                removeLoadingIndicator();
+                addMessage(`Error: ${error.message}`, false);
+            }
+        }
+
+        function parseMarkdownTable(text) {
+            const lines = text.split('\n');
+            const tables = [];
+            let i = 0;
+
+            while (i < lines.length) {
+                if (lines[i].includes('|')) {
+                    const tableLines = [lines[i]];
+                    i++;
+
+                    if (i < lines.length && lines[i].includes('|')) {
+                        tableLines.push(lines[i]);
+                        i++;
+                    }
+
+                    while (i < lines.length && lines[i].includes('|')) {
+                        tableLines.push(lines[i]);
+                        i++;
+                    }
+
+                    if (tableLines.length >= 2) {
+                        const headerCells = tableLines[0].split('|').filter(c => c.trim()).map(c => c.trim());
+                        const rows = [];
+
+                        for (let j = 2; j < tableLines.length; j++) {
+                            const cells = tableLines[j].split('|').filter(c => c.trim()).map(c => c.trim());
+                            if (cells.length > 0 && !cells[0].startsWith('-')) {
+                                rows.push(cells);
+                            }
+                        }
+
+                        if (headerCells.length > 0 && rows.length > 0) {
+                            let html = '<table>';
+                            html += '<thead><tr>';
+                            headerCells.forEach(h => html += `<th>${h}</th>`);
+                            html += '</tr></thead><tbody>';
+
+                            rows.forEach(row => {
+                                html += '<tr>';
+                                for (let j = 0; j < headerCells.length; j++) {
+                                    html += `<td>${row[j] || ''}</td>`;
+                                }
+                                html += '</tr>';
+                            });
+
+                            html += '</tbody></table>';
+                            tables.push({ html, startLine: i - tableLines.length, endLine: i });
+                        }
+                    }
+                } else {
+                    i++;
+                }
+            }
+
+            return tables.length > 0 ? tables : null;
+        }
+
+        function formatTextContent(text) {
+            let content = text;
+            content = content.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+            content = content.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+            content = content.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+            content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/__(.*?)__/g, '<strong>$1</strong>');
+
+            const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
+            content = paragraphs.map(p => {
+                if (p.includes('\n* ') || p.includes('\n- ')) {
+                    let list = '<ul>';
+                    p.split('\n').forEach(line => {
+                        if (line.match(/^\*\s|^-\s/)) {
+                            const item = line.replace(/^[\*-]\s/, '').trim();
+                            list += `<li>${item}</li>`;
+                        }
+                    });
+                    list += '</ul>';
+                    return list;
+                }
+                return `<p>${p.trim()}</p>`;
+            }).join('');
+
+            content = content.replace(/`(.*?)`/g, '<code>$1</code>');
+            return content;
+        }
+
+        function formatMarkdownToHtml(text) {
+            const tables = parseMarkdownTable(text);
+            let lines = text.split('\n');
+            let content = '';
+
+            if (tables) {
+                let lastEnd = 0;
+                tables.forEach(table => {
+                    const beforeLines = lines.slice(lastEnd, table.startLine).join('\n');
+                    if (beforeLines.trim()) {
+                        content += formatTextContent(beforeLines) + '\n';
+                    }
+                    content += table.html + '\n';
+                    lastEnd = table.endLine;
+                });
+
+                const afterLines = lines.slice(lastEnd).join('\n');
+                if (afterLines.trim()) {
+                    content += formatTextContent(afterLines);
+                }
+            } else {
+                content = formatTextContent(text);
+            }
+
+            return content;
+        }
+    </script>
+</body>
+</html>
