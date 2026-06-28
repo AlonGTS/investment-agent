@@ -8,6 +8,11 @@ const client = new Anthropic();
 app.use(express.json());
 app.use(express.static('public'));
 
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
 // Investment agent endpoint
 app.post('/api/analyze', async (req, res) => {
   try {
