@@ -1,6 +1,10 @@
 const express = require('express');
 const { Anthropic } = require('@anthropic-ai/sdk');
-require('dotenv').config();
+
+// Load .env only in development
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const app = express();
 const client = new Anthropic();
