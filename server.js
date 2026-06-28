@@ -122,6 +122,21 @@ function buildPrompt(action, data) {
 }
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
+
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Investment Agent running on port ${PORT}`);
+});
+
+// Error handling
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+server.on('error', (error) => {
+  console.error('Server error:', error);
 });
