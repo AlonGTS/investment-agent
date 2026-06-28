@@ -10,6 +10,13 @@ const app = express();
 const client = new Anthropic();
 
 app.use(express.json());
+
+// Test endpoint - responds immediately
+app.get('/test', (req, res) => {
+  res.send('✅ Server is working!');
+});
+
+// Serve static files
 app.use(express.static('public'));
 
 // Health check
